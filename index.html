@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Seru: Cocokkan Warna & Gambar!</title>
+    <title>Cocokkan Warna & Gambar!</title>
     <!-- Memuat Library Canvas Confetti untuk efek perayaan di akhir -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -236,24 +236,24 @@
         </div>
 
         <h1>🎨 Match Warnamu! 🍎</h1>
-        <p class="instruction">Tarik gambar buah di kiri ke kotak warna yang cocok di kanan ya!</p>
+        <p class="instruction">Tarik gambar buah ke kotak warna!</p>
 
         <div class="game-board">
             <!-- Kolom Gambar (Sumber Drag) -->
             <div class="column">
-                <div class="section-title">Gambar Buah</div>
+                <div class="section-title">Buah</div>
                 <div id="items-container" class="column"></div>
             </div>
 
             <!-- Kolom Target Warna (Drop Zone) -->
             <div class="column">
-                <div class="section-title">Kotak Warna</div>
+                <div class="section-title">Warna</div>
                 <div id="targets-container" class="column"></div>
             </div>
         </div>
 
         <div class="score-board">Skor: <span id="score">0</span> / 100</div>
-        <div class="congrats-msg" id="congrats">🎉 Hore Pintar Sekali! Berhasil Semua! 🌟</div>
+        <div class="congrats-msg" id="congrats">🎉Kamu Pintar!</div>
         <button id="reset-btn" onclick="initGame()">Main Lagi 🔄</button>
     </div>
 
@@ -263,7 +263,7 @@
             { id: 'banana', emoji: '🍌', name: 'Pisang', colorName: 'Kuning', colorCode: '#ffeaa7', textColor: '#2d3436' },
             { id: 'broccoli', emoji: '🥦', name: 'Brokoli', colorName: 'Hijau', colorCode: '#2ed573', textColor: '#ffffff' },
             { id: 'blueberry', emoji: '🫐', name: 'Blueberry', colorName: 'Biru', colorCode: '#3742fa', textColor: '#ffffff' },
-            { id: 'carrot', emoji: '🥕', name: 'Wortel', colorName: 'Jingga', colorCode: '#ffa502', textColor: '#ffffff' }
+            { id: 'carrot', emoji: '🥕', name: 'Wortel', colorName: 'Oranye', colorCode: '#ffa502', textColor: '#ffffff' }
         ];
 
         let score = 0;
