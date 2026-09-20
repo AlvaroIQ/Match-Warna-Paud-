@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cocokkan Warna & Gambar!</title>
-    <!-- Memuat Library Canvas Confetti untuk efek perayaan di akhir -->
+    <title>Counting Adventure: Berhitung Seru Anak TK!</title>
+    <!-- Memuat Library Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * {
@@ -13,7 +13,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -30,21 +30,21 @@
             max-width: 650px;
             width: 100%;
             text-align: center;
-            border: 5px solid #ff6b6b;
+            border: 5px solid #0984e3;
             position: relative;
         }
 
         h1 {
-            color: #ff6b6b;
+            color: #0984e3;
             font-size: 26px;
             margin-bottom: 5px;
-            text-shadow: 2px 2px 0px #ffe66d;
+            text-shadow: 2px 2px 0px #ffeaa7;
         }
 
         p.instruction {
             color: #555;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         /* Overlay Tombol Play Awal */
@@ -54,7 +54,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 20px;
             display: flex;
             flex-direction: column;
@@ -64,14 +64,14 @@
         }
 
         #start-overlay h2 {
-            color: #ff6b6b;
-            font-size: 32px;
+            color: #0984e3;
+            font-size: 30px;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 0px #ffe66d;
+            text-shadow: 2px 2px 0px #ffeaa7;
         }
 
         #play-btn {
-            background-color: #2ed573;
+            background-color: #00b894;
             color: white;
             border: none;
             padding: 15px 40px;
@@ -79,334 +79,331 @@
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(46, 213, 115, 0.4);
+            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
             transition: transform 0.2s, background 0.2s;
         }
 
         #play-btn:hover {
-            background-color: #20bf6b;
+            background-color: #00cec9;
             transform: scale(1.05);
         }
 
-        /* Area Game Play */
-        .game-board {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 25px;
-            gap: 20px;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .section-title {
-            font-weight: bold;
-            color: #4ecdc4;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        /* Kotak Warna Full dengan Teks Besar yang Menyesuaikan */
-        .drop-target {
-            border: 4px dashed #bdc3c7;
-            border-radius: 15px;
-            height: 85px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .drop-target.highlight {
-            transform: scale(1.03);
-            border-style: solid;
-            border-color: #ffffff;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
-
-        .drop-target.correct {
-            border-style: solid;
-            border-color: #20bf6b;
-            box-shadow: 0 0 10px #2ed573;
-        }
-
-        /* Gambar Buah (Drag Items) */
-        .drag-item {
-            background: white;
-            border: 4px solid #ffa502;
-            border-radius: 15px;
-            height: 85px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: grab;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s, opacity 0.2s;
-            user-select: none;
-        }
-
-        .drag-item:active {
-            cursor: grabbing;
-        }
-
-        .drag-item span.emoji {
-            font-size: 30px;
-            line-height: 1;
-        }
-
-        .drag-item span.label {
-            font-size: 11px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .drag-item.dragging {
-            opacity: 0.4;
-        }
-
-        .drag-item.matched {
-            opacity: 0.3;
-            pointer-events: none;
-            border-color: #2ed573;
+        /* Area Pertanyaan / Soal */
+        .question-box {
             background: #f1f2f6;
+            border: 3px dashed #747d8c;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 160px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        /* Bagian Skor & Reset */
-        .score-board {
+        .item-icon {
+            font-size: 45px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Pilihan Gambar Jari (Opsi Jawaban) */
+        .options-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background-color: #ffeaa7;
+            border: 4px solid #fdcb6e;
+            width: 75px;
+            height: 75px;
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 6px;
+        }
+
+        .option-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .option-btn:hover {
+            background-color: #fdcb6e;
+            transform: scale(1.08);
+        }
+
+        .option-btn.correct {
+            background-color: #00b894 !important;
+            border-color: #00cec9 !important;
+            transform: scale(1.1);
+        }
+
+        .option-btn.wrong {
+            background-color: #ff7675 !important;
+            border-color: #d63031 !important;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Status & Level Info */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3436;
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+
+        /* Feedback Pesan Benar/Salah di Soal */
+        #feedback-text {
             font-size: 20px;
             font-weight: bold;
-            color: #2f3640;
-            margin-top: 15px;
+            height: 30px;
+            margin-bottom: 10px;
         }
 
-        #reset-btn {
-            background-color: #ff4757;
+        /* Tombol Main Lagi / Lanjut */
+        #next-btn {
+            background-color: #0984e3;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 30px;
             font-size: 18px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4);
             display: none;
             transition: background 0.2s;
         }
 
-        #reset-btn:hover {
-            background-color: #ff6b81;
-        }
-
-        /* Popup Selesai */
-        .congrats-msg {
-            display: none;
-            font-size: 22px;
-            color: #2ed573;
-            font-weight: bold;
-            margin-top: 15px;
-            animation: bounce 0.5s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-5px); }
+        #next-btn:hover {
+            background-color: #74b9ff;
         }
     </style>
 </head>
 <body>
 
-    <!-- Elemen Audio dengan URL Musik Latar Terbaru & Musik Selesai -->
-    <audio id="bg-music" src="https://files.catbox.moe/qebg3k.mp3" preload="auto" loop></audio>
+    <!-- Musik Latar & Musik Selesai -->
+    <audio id="bg-music" src="https://files.catbox.moe/a742my.mp3" preload="auto" loop></audio>
     <audio id="win-music" src="https://files.catbox.moe/wsohm6.mp3" preload="auto"></audio>
 
     <div class="game-container">
         <!-- Overlay Tombol Play Awal -->
         <div id="start-overlay">
-            <h2>🎨 Siap Bermain? 🍎</h2>
-            <button id="play-btn" onclick="startGame()">Mulai 🚀</button>
+            <h2>🎒 Counting Adventure 🔢</h2>
+            <button id="play-btn" onclick="startGame()">Mulai Main 🚀</button>
         </div>
 
-        <h1>🎨 Match Warnamu! 🍎</h1>
-        <p class="instruction">Tarik gambar buah ke kotak warna!</p>
+        <h1>⭐ Petualangan Berhitung ⭐</h1>
+        <p class="instruction">Hitung ada berapa banyak benda, lalu pilih gambar jari tangan yang cocok!</p>
 
-        <div class="game-board">
-            <!-- Kolom Gambar (Sumber Drag) -->
-            <div class="column">
-                <div class="section-title">Buah</div>
-                <div id="items-container" class="column"></div>
-            </div>
-
-            <!-- Kolom Target Warna (Drop Zone) -->
-            <div class="column">
-                <div class="section-title">Warna</div>
-                <div id="targets-container" class="column"></div>
-            </div>
+        <div class="game-info">
+            <div>Soal ke: <span id="current-level">1</span> / 5</div>
+            <div>Skor: <span id="score">0</span></div>
         </div>
 
-        <div class="score-board">Skor: <span id="score">0</span> / 100</div>
-        <div class="congrats-msg" id="congrats">🎉Kamu Pintar!</div>
-        <button id="reset-btn" onclick="initGame()"> Main Lagi </button>
+        <div id="feedback-text"></div>
+
+        <!-- Kotak Tempat Objek yang Dihitung -->
+        <div class="question-box" id="question-box">
+            <!-- Icon benda akan di-generate di sini -->
+        </div>
+
+        <!-- Pilihan Gambar Jari -->
+        <div class="options-container" id="options-container">
+            <!-- Tombol pilihan jari tangan -->
+        </div>
+
+        <button id="next-btn" onclick="nextQuestion()">Lanjut Soal Berikutnya ➡️</button>
     </div>
 
     <script>
-        const gameData = [
-            { id: 'apple', emoji: '🍎', name: 'Apel', colorName: 'Merah', colorCode: '#ff4757', textColor: '#ffffff' },
-            { id: 'banana', emoji: '🍌', name: 'Pisang', colorName: 'Kuning', colorCode: '#ffeaa7', textColor: '#2d3436' },
-            { id: 'broccoli', emoji: '🥦', name: 'Brokoli', colorName: 'Hijau', colorCode: '#2ed573', textColor: '#ffffff' },
-            { id: 'blueberry', emoji: '🫐', name: 'Blueberry', colorName: 'Biru', colorCode: '#3742fa', textColor: '#ffffff' },
-            { id: 'carrot', emoji: '🥕', name: 'Wortel', colorName: 'Oranye', colorCode: '#ffa502', textColor: '#ffffff' }
+        // Data master level permainan
+        const masterLevels = [
+            { emoji: '🍎', name: 'Apel', count: 3 },
+            { emoji: '🐱', name: 'Kucing', count: 5 },
+            { emoji: '⭐', name: 'Bintang', count: 2 },
+            { emoji: '🚗', name: 'Mobil', count: 4 },
+            { emoji: '🎈', name: 'Balon', count: 6 }
         ];
 
-        let score = 0;
-        let matchedCount = 0;
+        let activeLevels = [];
 
-        const itemsContainer = document.getElementById('items-container');
-        const targetsContainer = document.getElementById('targets-container');
-        const scoreDisplay = document.getElementById('score');
-        const congratsMsg = document.getElementById('congrats');
-        const resetBtn = document.getElementById('reset-btn');
+        // Pemetaan tautan gambar jari sesuai permintaan (Angka 2 sampai 6)
+        const optionDetails = {
+            2: '<img src="https://i.ibb.co.com/svqqSdJr/2.jpg" alt="Jari 2">',
+            3: '<img src="https://i.ibb.co.com/QvvKHNQs/3.jpg" alt="Jari 3">',
+            4: '<img src="https://i.ibb.co.com/847yYNx5/4.jpg" alt="Jari 4">',
+            5: '<img src="https://i.ibb.co.com/TxJdJJwJ/5.jpg" alt="Jari 5">',
+            6: '<img src="https://i.ibb.co.com/MxLDydC6/6.jpg" alt="Jari 6">'
+        };
+
+        let currentLevelIndex = 0;
+        let score = 0;
+        let canAnswer = true;
+
         const startOverlay = document.getElementById('start-overlay');
+        const questionBox = document.getElementById('question-box');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('current-level');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
         const bgMusic = document.getElementById('bg-music');
         const winMusic = document.getElementById('win-music');
 
         function startGame() {
-            // Sembunyikan layar awal
             startOverlay.style.display = 'none';
-            
-            // Putar musik latar dari awal
             bgMusic.currentTime = 0;
             bgMusic.play().catch(() => {});
-            
             initGame();
         }
 
         function initGame() {
+            currentLevelIndex = 0;
             score = 0;
-            matchedCount = 0;
             scoreDisplay.textContent = score;
-            congratsMsg.style.display = 'none';
-            resetBtn.style.display = 'none';
-            
-            // Hentikan musik menang jika aktif, lalu nyalakan kembali musik latar dari awal (untuk tombol "Main Lagi")
             winMusic.pause();
             winMusic.currentTime = 0;
-            bgMusic.currentTime = 0;
-            bgMusic.play().catch(() => {});
+            
+            // Acak urutan soal (randomize levels) setiap game dimulai atau di-restart
+            activeLevels = [...masterLevels].sort(() => Math.random() - 0.5);
 
-            itemsContainer.innerHTML = '';
-            targetsContainer.innerHTML = '';
+            loadLevel();
+        }
 
-            let shuffledItems = [...gameData].sort(() => Math.random() - 0.5);
-            let shuffledTargets = [...gameData].sort(() => Math.random() - 0.5);
+        function loadLevel() {
+            canAnswer = true;
+            feedbackText.textContent = '';
+            nextBtn.style.display = 'none';
+            levelDisplay.textContent = currentLevelIndex + 1;
+            questionBox.innerHTML = '';
+            optionsContainer.innerHTML = '';
 
-            // Render Buah
-            shuffledItems.forEach(item => {
-                const div = document.createElement('div');
-                div.classList.add('drag-item');
-                div.setAttribute('draggable', 'true');
-                div.setAttribute('id', item.id);
-                div.innerHTML = `
-                    <span class="emoji">${item.emoji}</span>
-                    <span class="label">${item.name}</span>
-                `;
+            const currentObj = activeLevels[currentLevelIndex];
+
+            // Render objek sejumlah count
+            for (let i = 0; i < currentObj.count; i++) {
+                const span = document.createElement('span');
+                span.classList.add('item-icon');
+                span.textContent = currentObj.emoji;
+                questionBox.appendChild(span);
+            }
+
+            // Buat pilihan angka acak (pastikan jawaban benar masuk ke dalam opsi)
+            let choices = [currentObj.count];
+            while (choices.length < 4) {
+                let randomNum = Math.floor(Math.random() * 5) + 2; // angka 2 sampai 6
+                if (!choices.includes(randomNum)) {
+                    choices.push(randomNum);
+                }
+            }
+            // Acak urutan tombol pilihan
+            choices.sort(() => Math.random() - 0.5);
+
+            // Render tombol pilihan opsi (gambar jari tangan)
+            choices.forEach(num => {
+                const btn = document.createElement('button');
+                btn.classList.add('option-btn');
                 
-                div.addEventListener('dragstart', dragStart);
-                div.addEventListener('dragend', dragEnd);
-                itemsContainer.appendChild(div);
-            });
+                if (optionDetails[num] !== undefined) {
+                    btn.innerHTML = optionDetails[num];
+                } else {
+                    btn.textContent = num;
+                }
 
-            // Render Kotak Warna Full
-            shuffledTargets.forEach(target => {
-                const div = document.createElement('div');
-                div.classList.add('drop-target');
-                div.setAttribute('data-color', target.id);
-                div.style.backgroundColor = target.colorCode;
-                div.style.color = target.textColor;
-                div.textContent = target.colorName;
-
-                div.addEventListener('dragover', dragOver);
-                div.addEventListener('dragleave', dragLeave);
-                div.addEventListener('drop', dropItem);
-                targetsContainer.appendChild(div);
+                btn.onclick = () => checkAnswer(num, currentObj.count, btn);
+                optionsContainer.appendChild(btn);
             });
         }
 
-        let draggedElement = null;
+        function checkAnswer(selectedNum, correctNum, btnElement) {
+            if (!canAnswer) return;
+            canAnswer = false;
 
-        function dragStart(e) {
-            draggedElement = this;
-            setTimeout(() => this.classList.add('dragging'), 0);
-        }
-
-        function dragEnd() {
-            this.classList.remove('dragging');
-            draggedElement = null;
-        }
-
-        function dragOver(e) {
-            e.preventDefault();
-            this.classList.add('highlight');
-        }
-
-        function dragLeave() {
-            this.classList.remove('highlight');
-        }
-
-        function dropItem(e) {
-            e.preventDefault();
-            this.classList.remove('highlight');
-
-            if (!draggedElement) return;
-
-            const targetColorID = this.getAttribute('data-color');
-            const draggedItemID = draggedElement.getAttribute('id');
-
-            if (targetColorID === draggedItemID) {
-                this.textContent = `✅ Cocok!`;
-                this.classList.add('correct');
-                draggedElement.classList.add('matched');
-                
+            if (selectedNum === correctNum) {
+                btnElement.classList.add('correct');
+                feedbackText.textContent = '🎉 Hebat! Jawabanmu Benar!';
+                feedbackText.style.color = '#00b894';
                 score += 20;
-                matchedCount++;
                 scoreDisplay.textContent = score;
 
-                if (matchedCount === gameData.length) {
+                if (currentLevelIndex < activeLevels.length - 1) {
+                    nextBtn.textContent = 'Lanjut Soal Berikutnya ➡️';
+                    nextBtn.style.display = 'inline-block';
+                } else {
                     endGame();
                 }
             } else {
-                let originalBg = this.style.backgroundColor;
-                this.style.backgroundColor = "#ff6b81";
-                this.style.color = "#ffffff";
-                setTimeout(() => {
-                    const currentData = gameData.find(d => d.id === targetColorID);
-                    this.style.backgroundColor = currentData.colorCode;
-                    this.style.color = currentData.textColor;
-                    this.textContent = currentData.colorName;
-                }, 400);
+                btnElement.classList.add('wrong');
+                feedbackText.textContent = '❌ Ups, coba hitung lagi ya!';
+                feedbackText.style.color = '#d63031';
+
+                if (currentLevelIndex < activeLevels.length - 1) {
+                    nextBtn.textContent = 'Lanjut Soal Berikutnya ➡️';
+                    nextBtn.style.display = 'inline-block';
+                } else {
+                    endGame();
+                }
             }
         }
 
+        function nextQuestion() {
+            currentLevelIndex++;
+            loadLevel();
+        }
+
         function endGame() {
-            congratsMsg.style.display = 'block';
-            resetBtn.style.display = 'inline-block';
-            
-            // Matikan musik latar, lalu putar musik menang (confetti)
+            feedbackText.textContent = '🌟 Hore! Kamu Menyelesaikan Petualangan Berhitung! 🌟';
+            feedbackText.style.color = '#0984e3';
+            nextBtn.textContent = 'Main Lagi 🔄';
+            nextBtn.onclick = () => {
+                winMusic.pause();
+                winMusic.currentTime = 0;
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(() => {});
+                initGame(); // Mengacak ulang urutan soal saat klik Main Lagi
+                nextBtn.onclick = nextQuestion;
+            };
+            nextBtn.style.display = 'inline-block';
+
+            // Matikan musik latar, nyalakan musik menang & efek confetti
             bgMusic.pause();
             winMusic.currentTime = 0;
             winMusic.play().catch(() => {});
-            
+
             confetti({
-                particleCount: 180,
-                spread: 90,
+                particleCount: 200,
+                spread: 100,
                 origin: { y: 0.6 }
             });
         }
