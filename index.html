@@ -31,6 +31,7 @@
             width: 100%;
             text-align: center;
             border: 5px solid #ff6b6b;
+            position: relative;
         }
 
         h1 {
@@ -44,6 +45,47 @@
             color: #555;
             font-size: 16px;
             margin-bottom: 20px;
+        }
+
+        /* Overlay Tombol Play Awal */
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #start-overlay h2 {
+            color: #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #ffe66d;
+        }
+
+        #play-btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(46, 213, 115, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        #play-btn:hover {
+            background-color: #20bf6b;
+            transform: scale(1.05);
         }
 
         /* Area Game Play */
@@ -182,7 +224,17 @@
 </head>
 <body>
 
+    <!-- Elemen Audio dengan URL Musik Latar Terbaru & Musik Selesai -->
+    <audio id="bg-music" src="https://files.catbox.moe/qebg3k.mp3" preload="auto" loop></audio>
+    <audio id="win-music" src="https://files.catbox.moe/wsohm6.mp3" preload="auto"></audio>
+
     <div class="game-container">
+        <!-- Overlay Tombol Play Awal -->
+        <div id="start-overlay">
+            <h2>🎨 Siap Bermain? 🍎</h2>
+            <button id="play-btn" onclick="startGame()">Mulai 🚀</button>
+        </div>
+
         <h1>🎨 Match Warnamu! 🍎</h1>
         <p class="instruction">Tarik gambar buah di kiri ke kotak warna yang cocok di kanan ya!</p>
 
@@ -222,6 +274,20 @@
         const scoreDisplay = document.getElementById('score');
         const congratsMsg = document.getElementById('congrats');
         const resetBtn = document.getElementById('reset-btn');
+        const startOverlay = document.getElementById('start-overlay');
+        const bgMusic = document.getElementById('bg-music');
+        const winMusic = document.getElementById('win-music');
+
+        function startGame() {
+            // Sembunyikan layar awal
+            startOverlay.style.display = 'none';
+            
+            // Putar musik latar dari awal
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {});
+            
+            initGame();
+        }
 
         function initGame() {
             score = 0;
@@ -230,6 +296,12 @@
             congratsMsg.style.display = 'none';
             resetBtn.style.display = 'none';
             
+            // Hentikan musik menang jika aktif, lalu nyalakan kembali musik latar dari awal (untuk tombol "Main Lagi")
+            winMusic.pause();
+            winMusic.currentTime = 0;
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {});
+
             itemsContainer.innerHTML = '';
             targetsContainer.innerHTML = '';
 
@@ -259,7 +331,7 @@
                 div.setAttribute('data-color', target.id);
                 div.style.backgroundColor = target.colorCode;
                 div.style.color = target.textColor;
-                div.textContent = target.colorName; // Langsung nama warna ukuran besar
+                div.textContent = target.colorName;
 
                 div.addEventListener('dragover', dragOver);
                 div.addEventListener('dragleave', dragLeave);
@@ -311,12 +383,10 @@
                     endGame();
                 }
             } else {
-                // Efek salah (bergetar warna merah lembut sesaat)
                 let originalBg = this.style.backgroundColor;
                 this.style.backgroundColor = "#ff6b81";
                 this.style.color = "#ffffff";
                 setTimeout(() => {
-                    // Kembalikan ke warna aslinya
                     const currentData = gameData.find(d => d.id === targetColorID);
                     this.style.backgroundColor = currentData.colorCode;
                     this.style.color = currentData.textColor;
@@ -329,14 +399,17 @@
             congratsMsg.style.display = 'block';
             resetBtn.style.display = 'inline-block';
             
+            // Matikan musik latar, lalu putar musik menang (confetti)
+            bgMusic.pause();
+            winMusic.currentTime = 0;
+            winMusic.play().catch(() => {});
+            
             confetti({
                 particleCount: 180,
                 spread: 90,
                 origin: { y: 0.6 }
             });
         }
-
-        initGame();
     </script>
 </body>
 </html>
