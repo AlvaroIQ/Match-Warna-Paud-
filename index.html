@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Seru: Cocokkan Warna & Gambar!</title>
+    <!-- Memuat Library Canvas Confetti untuk efek perayaan di akhir -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Bubblegum Sans', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            border: 5px solid #ff6b6b;
+            position: relative;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 26px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0px #ffe66d;
+        }
+
+        p.instruction {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Overlay Tombol Play Awal */
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #start-overlay h2 {
+            color: #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #ffe66d;
+        }
+
+        #play-btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(46, 213, 115, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        #play-btn:hover {
+            background-color: #20bf6b;
+            transform: scale(1.05);
+        }
+
+        /* Area Game Play */
+        .game-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #4ecdc4;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        /* Kotak Warna Full dengan Teks Besar yang Menyesuaikan */
+        .drop-target {
+            border: 4px dashed #bdc3c7;
+            border-radius: 15px;
+            height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .drop-target.highlight {
+            transform: scale(1.03);
+            border-style: solid;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .drop-target.correct {
+            border-style: solid;
+            border-color: #20bf6b;
+            box-shadow: 0 0 10px #2ed573;
+        }
+
+        /* Gambar Buah (Drag Items) */
+        .drag-item {
+            background: white;
+            border: 4px solid #ffa502;
+            border-radius: 15px;
+            height: 85px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, opacity 0.2s;
+            user-select: none;
+        }
+
+        .drag-item:active {
+            cursor: grabbing;
+        }
+
+        .drag-item span.emoji {
+            font-size: 30px;
+            line-height: 1;
+        }
+
+        .drag-item span.label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .drag-item.dragging {
+            opacity: 0.4;
+        }
+
+        .drag-item.matched {
+            opacity: 0.3;
+            pointer-events: none;
+            border-color: #2ed573;
+            background: #f1f2f6;
+        }
+
+        /* Bagian Skor & Reset */
+        .score-board {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2f3640;
+            margin-top: 15px;
+        }
+
+        #reset-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+            display: none;
+            transition: background 0.2s;
+        }
+
+        #reset-btn:hover {
+            background-color: #ff6b81;
+        }
+
+        /* Popup Selesai */
+        .congrats-msg {
+            display: none;
+            font-size: 22px;
+            color: #2ed573;
+            font-weight: bold;
+            margin-top: 15px;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Elemen Audio dengan URL Musik Latar Terbaru & Musik Selesai -->
+    <audio id="bg-music" src="https://files.catbox.moe/qebg3k.mp3" preload="auto" loop></audio>
+    <audio id="win-music" src="https://files.catbox.moe/wsohm6.mp3" preload="auto"></audio>
+
+    <div class="game-container">
+        <!-- Overlay Tombol Play Awal -->
+        <div id="start-overlay">
+            <h2>🎨 Siap Bermain? 🍎</h2>
+            <button id="play-btn" onclick="startGame()">Mulai 🚀</button>
+        </div>
+
+        <h1>🎨 Match Warnamu! 🍎</h1>
+        <p class="instruction">Tarik gambar buah di kiri ke kotak warna yang cocok di kanan ya!</p>
+
+        <div class="game-board">
+            <!-- Kolom Gambar (Sumber Drag) -->
+            <div class="column">
+                <div class="section-title">Gambar Buah</div>
+                <div id="items-container" class="column"></div>
+            </div>
+
+            <!-- Kolom Target Warna (Drop Zone) -->
+            <div class="column">
+                <div class="section-title">Kotak Warna</div>
+                <div id="targets-container" class="column"></div>
+            </div>
+        </div>
+
+        <div class="score-board">Skor: <span id="score">0</span> / 100</div>
+        <div class="congrats-msg" id="congrats">🎉 Hore Pintar Sekali! Berhasil Semua! 🌟</div>
+        <button id="reset-btn" onclick="initGame()">Main Lagi 🔄</button>
+    </div>
+
+    <script>
+        const gameData = [
+            { id: 'apple', emoji: '🍎', name: 'Apel', colorName: 'Merah', colorCode: '#ff4757', textColor: '#ffffff' },
+            { id: 'banana', emoji: '🍌', name: 'Pisang', colorName: 'Kuning', colorCode: '#ffeaa7', textColor: '#2d3436' },
+            { id: 'broccoli', emoji: '🥦', name: 'Brokoli', colorName: 'Hijau', colorCode: '#2ed573', textColor: '#ffffff' },
+            { id: 'blueberry', emoji: '🫐', name: 'Blueberry', colorName: 'Biru', colorCode: '#3742fa', textColor: '#ffffff' },
+            { id: 'carrot', emoji: '🥕', name: 'Wortel', colorName: 'Jingga', colorCode: '#ffa502', textColor: '#ffffff' }
+        ];
+
+        let score = 0;
+        let matchedCount = 0;
+
+        const itemsContainer = document.getElementById('items-container');
+        const targetsContainer = document.getElementById('targets-container');
+        const scoreDisplay = document.getElementById('score');
+        const congratsMsg = document.getElementById('congrats');
+        const resetBtn = document.getElementById('reset-btn');
+        const startOverlay = document.getElementById('start-overlay');
+        const bgMusic = document.getElementById('bg-music');
+        const winMusic = document.getElementById('win-music');
+
+        function startGame() {
+            // Sembunyikan layar awal
+            startOverlay.style.display = 'none';
+            
+            // Putar musik latar dari awal
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {});
+            
+            initGame();
+        }
+
+        function initGame() {
+            score = 0;
+            matchedCount = 0;
+            scoreDisplay.textContent = score;
+            congratsMsg.style.display = 'none';
+            resetBtn.style.display = 'none';
+            
+            // Hentikan musik menang jika aktif, lalu nyalakan kembali musik latar dari awal (untuk tombol "Main Lagi")
+            winMusic.pause();
+            winMusic.currentTime = 0;
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {});
+
+            itemsContainer.innerHTML = '';
+            targetsContainer.innerHTML = '';
+
+            let shuffledItems = [...gameData].sort(() => Math.random() - 0.5);
+            let shuffledTargets = [...gameData].sort(() => Math.random() - 0.5);
+
+            // Render Buah
+            shuffledItems.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('drag-item');
+                div.setAttribute('draggable', 'true');
+                div.setAttribute('id', item.id);
+                div.innerHTML = `
+                    <span class="emoji">${item.emoji}</span>
+                    <span class="label">${item.name}</span>
+                `;
+                
+                div.addEventListener('dragstart', dragStart);
+                div.addEventListener('dragend', dragEnd);
+                itemsContainer.appendChild(div);
+            });
+
+            // Render Kotak Warna Full
+            shuffledTargets.forEach(target => {
+                const div = document.createElement('div');
+                div.classList.add('drop-target');
+                div.setAttribute('data-color', target.id);
+                div.style.backgroundColor = target.colorCode;
+                div.style.color = target.textColor;
+                div.textContent = target.colorName;
+
+                div.addEventListener('dragover', dragOver);
+                div.addEventListener('dragleave', dragLeave);
+                div.addEventListener('drop', dropItem);
+                targetsContainer.appendChild(div);
+            });
+        }
+
+        let draggedElement = null;
+
+        function dragStart(e) {
+            draggedElement = this;
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+
+        function dragEnd() {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            this.classList.add('highlight');
+        }
+
+        function dragLeave() {
+            this.classList.remove('highlight');
+        }
+
+        function dropItem(e) {
+            e.preventDefault();
+            this.classList.remove('highlight');
+
+            if (!draggedElement) return;
+
+            const targetColorID = this.getAttribute('data-color');
+            const draggedItemID = draggedElement.getAttribute('id');
+
+            if (targetColorID === draggedItemID) {
+                this.textContent = `✅ Cocok!`;
+                this.classList.add('correct');
+                draggedElement.classList.add('matched');
+                
+                score += 20;
+                matchedCount++;
+                scoreDisplay.textContent = score;
+
+                if (matchedCount === gameData.length) {
+                    endGame();
+                }
+            } else {
+                let originalBg = this.style.backgroundColor;
+                this.style.backgroundColor = "#ff6b81";
+                this.style.color = "#ffffff";
+                setTimeout(() => {
+                    const currentData = gameData.find(d => d.id === targetColorID);
+                    this.style.backgroundColor = currentData.colorCode;
+                    this.style.color = currentData.textColor;
+                    this.textContent = currentData.colorName;
+                }, 400);
+            }
+        }
+
+        function endGame() {
+            congratsMsg.style.display = 'block';
+            resetBtn.style.display = 'inline-block';
+            
+            // Matikan musik latar, lalu putar musik menang (confetti)
+            bgMusic.pause();
+            winMusic.currentTime = 0;
+            winMusic.play().catch(() => {});
+            
+            confetti({
+                particleCount: 180,
+                spread: 90,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+</body>
+</html>
